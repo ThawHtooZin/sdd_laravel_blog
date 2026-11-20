@@ -17,15 +17,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $email = config('admin.email');
-        $password = config('admin.password');
+        $email = 'admin@gmail.com';
+        $password = 'admin1234';
 
         if (! is_string($email) || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             throw new InvalidArgumentException('Set ADMIN_EMAIL to a valid email address before seeding.');
         }
 
-        if (! is_string($password) || Str::length($password) < 12) {
-            throw new InvalidArgumentException('Set ADMIN_PASSWORD to a password with at least 12 characters before seeding.');
+        if (! is_string($password) || Str::length($password) < 8) {
+            throw new InvalidArgumentException('Set ADMIN_PASSWORD to a password with at least 8 characters before seeding.');
         }
 
         User::query()->updateOrCreate(

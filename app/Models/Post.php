@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Post extends Model
@@ -25,6 +26,11 @@ class Post extends Model
         'published_at' => 'datetime',
     ];
 
+    public function chunks(): HasMany
+    {
+        return $this->hasMany(PostChunk::class);
+    }
+
     /**
      * @return BelongsTo<User, $this>
      */
@@ -39,13 +45,15 @@ class Post extends Model
         $slug = $base;
         $counter = 2;
 
-        while (self::query()
-            ->where('slug', $slug)
-            ->when($ignoreId !== null, function ($query) use ($ignoreId) {
-                $query->whereKeyNot($ignoreId);
-            })
-            ->exists()) {
-            $slug = $base.'-'.$counter;
+        while (
+            self::query()
+                ->where('slug', $slug)
+                ->when($ignoreId !== null, function ($query) use ($ignoreId) {
+                    $query->whereKeyNot($ignoreId);
+                })
+                ->exists()
+        ) {
+            $slug = $base . '-' . $counter;
             $counter++;
         }
 
