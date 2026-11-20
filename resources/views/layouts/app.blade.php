@@ -11,11 +11,12 @@
     </head>
     <body class="bg-slate-100 text-slate-900 antialiased">
         <header class="border-b border-slate-200 bg-white/80 backdrop-blur">
-            <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+            <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
                 <a href="{{ route('home') }}" class="text-xl font-bold text-slate-900">Laravel Blog</a>
 
-                <nav class="flex items-center gap-4 text-sm font-medium text-slate-600">
+                <nav class="flex flex-wrap items-center justify-end gap-3 text-sm font-medium text-slate-600">
                     <a href="{{ route('home') }}" class="hover:text-slate-900">Home</a>
+                    <a href="{{ route('ask.index') }}" class="hover:text-slate-900">Ask the blog</a>
                     @auth
                         <a href="{{ route('admin.posts.index') }}" class="hover:text-slate-900">Admin</a>
                         <form method="POST" action="{{ route('logout') }}">

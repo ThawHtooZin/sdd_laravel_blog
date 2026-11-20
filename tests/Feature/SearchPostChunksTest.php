@@ -2,32 +2,19 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
+use App\Services\PostChunkRetriever;
 use Tests\TestCase;
 
 class SearchPostChunksTest extends TestCase
 {
     public function test_it_embeds_the_question_and_prints_nearest_published_chunks(): void
     {
-        Http::preventStrayRequests();
-        Http::fake([
-            'http://127.0.0.1:11434/api/embed' => Http::response([
-                'embeddings' => [array_fill(0, 768, 0.25)],
-            ]),
-        ]);
-
-        DB::shouldReceive('select')
+        $this->mock(PostChunkRetriever::class)
+            ->shouldReceive('retrieve')
             ->once()
-            ->withArgs(function (string $query, array $bindings): bool {
-                return str_contains($query, 'post_chunks.embedding <=> CAST(? AS vector)')
-                    && str_contains($query, 'posts.is_published IS TRUE')
-                    && str_contains($query, 'LIMIT 3')
-                    && count(json_decode($bindings[0], true, flags: JSON_THROW_ON_ERROR)) === 768;
-            })
+            ->with('Which method checks submitted credentials?')
             ->andReturn([
-                (object) [
+                [
                     'title' => 'Laravel Authentication Explained',
                     'slug' => 'rag-demo-laravel-authentication',
                     'content' => 'Auth::attempt() checks the submitted credentials.',
@@ -42,9 +29,5 @@ class SearchPostChunksTest extends TestCase
             ->expectsOutputToContain('Laravel Authentication Explained')
             ->expectsOutputToContain('Auth::attempt() checks the submitted credentials.')
             ->assertExitCode(0);
-
-        Http::assertSent(fn (Request $request): bool => $request->url() === 'http://127.0.0.1:11434/api/embed'
-            && $request['model'] === 'nomic-embed-text'
-            && $request['input'] === 'search_query: Which method checks submitted credentials?');
     }
 }

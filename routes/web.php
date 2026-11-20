@@ -1,12 +1,15 @@
 <?php
 
 use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\AskController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/posts/{post:slug}', [HomeController::class, 'show'])->name('posts.show');
+Route::get('/ask', [AskController::class, 'index'])->name('ask.index');
+Route::post('/ask', [AskController::class, 'store'])->middleware('throttle:5,1')->name('ask.store');
 
 Route::middleware('guest')->group(function () {
     Route::get('/admin/login', [LoginController::class, 'showLoginForm'])->name('login');
